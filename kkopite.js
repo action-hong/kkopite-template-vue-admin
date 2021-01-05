@@ -1,6 +1,7 @@
 module.exports = {
   ignore: [
-    '**/*.vue'
+    '**/*.vue',
+    'plop-templates/**/*'
   ],
   prompt: [
     {
