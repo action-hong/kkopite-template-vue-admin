@@ -1,0 +1,190 @@
+{{#if template}}
+<template>
+  <div class="app-container">
+    <div class="filter-container">
+      <el-input
+        v-model="listQuery.name"
+        placeholder="搜索"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        搜索
+      </el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-edit" @click="handleCreate">
+        新建
+      </el-button>
+    </div>
+    <el-table
+      v-loading="listLoading"
+      :data="list"
+      border
+      style="width: 100% margin-top:30px;"
+    >
+      <el-table-column
+        align="center"
+        label="id"
+        prop="id"
+      />
+
+      <el-table-column align="center" prop="created_at" label="创建时间">
+        <template slot-scope="scope">
+          <span>\{{ scope.row.createTs | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" prop="updated_at" label="更新时间">
+        <template slot-scope="scope">
+          <span>\{{ scope.row.updateTs | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="operator" width="120">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            @click="handleEdit(scope.row)"
+          >编辑</el-button>
+          <el-divider direction="vertical" />
+          <el-popconfirm
+            title="是否删除?"
+            @onConfirm="handleDelete(scope.$index, scope.row)"
+          >
+            <el-button
+              slot="reference"
+              size="mini"
+              type="text"
+            >删除</el-button>
+          </el-popconfirm>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <el-dialog
+      :visible.sync="dialogFormShow"
+      :title="formTitle"
+      @close="resetForm('form')"
+    >
+      <el-form ref="form" :model="dialogForm" :rules="rules" label-position="top">
+        <el-form-item prop="id" hidden>
+          <el-input v-model="dialogForm.id" />
+        </el-form-item>
+        <el-form-item>
+          <el-button v-loading="listLoading" type="primary" @click="submit">提交</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
+</template>
+{{/if}}
+
+{{#if script}}
+<script>
+import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+
+export default {
+  name: '{{ properCase name }}',
+  components: { Pagination },
+  data() {
+    return {
+      list: null,
+      total: 0,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 15,
+        name: ''
+      },
+      // 表单
+      dialogFormShow: false,
+      dialogForm: {
+
+      },
+      // 表示新建
+      isCreate: true,
+      rules: {}
+    }
+  },
+  computed: {
+    formTitle() {
+      return this.isCreate ? '新建' : '编辑'
+    }
+  },
+  created() {
+    this.getList()
+  },
+  mounted() {},
+  methods: {
+    getList() {
+      this.listLoading = true
+      get{{ properCase name }}List({
+        limit: this.listQuery.limit,
+        offset: this.listQuery.limit * (this.listQuery.page - 1)
+      }).then(response => {
+        const data = response.data
+        this.total = data.totalRecord
+        this.list = data.records
+      }).finally(_ => {
+        this.listLoading = false
+      })
+    },
+    handleDelete(index, row) {
+      // 删除处理
+      delete{{ properCase name }}({
+        id: row.id,
+        isDeleted: 1
+      })
+        .then(this.getList)
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
+    },
+    handleCreate() {
+      this.isCreate = true
+      this.dialogFormShow = true
+    },
+    handleEdit(row) {
+      this.isCreate = false
+      this.dialogFormShow = true
+      this.$nextTick(_ => {
+        // todo
+      })
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
+    submit() {
+      if (this.listLoading) return
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          this.listLoading = true
+          const data = {
+            ...this.dialogForm
+          }
+          if (this.isCreate) {
+            delete data.id
+          }
+          saveCategory(data)
+            .then(_ => {
+              this.getList()
+            }).finally(_ => {
+              this.listLoading = false
+              this.dialogFormShow = false
+            })
+        }
+      })
+    }
+  }
+}
+</script>
+{{/if}}
+
+{{#if style}}
+<style lang="scss" scoped>
+
+</style>
+{{/if}}
