@@ -7,6 +7,8 @@
         placeholder="搜索"
         style="width: 200px;"
         class="filter-item"
+        clearable
+        @clear="handleFilter"
         @keyup.enter.native="handleFilter"
       />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -28,19 +30,19 @@
         prop="id"
       />
 
-      <el-table-column align="center" prop="created_at" label="创建时间">
+      <el-table-column align="center" prop="createTs" label="创建时间">
         <template slot-scope="scope">
           <span>\{{ scope.row.createTs | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" prop="updated_at" label="更新时间">
+      <el-table-column align="center" prop="updateTs" label="更新时间">
         <template slot-scope="scope">
           <span>\{{ scope.row.updateTs | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="operator" width="120">
+      <el-table-column align="center" label="操作" width="120">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -120,10 +122,11 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      get{{ properCase name }}List({
+      const params = {
         limit: this.listQuery.limit,
         offset: this.listQuery.limit * (this.listQuery.page - 1)
-      }).then(response => {
+      }
+      get{{ properCase name }}List(params).then(response => {
         const data = response.data
         this.total = data.totalRecord
         this.list = data.records
