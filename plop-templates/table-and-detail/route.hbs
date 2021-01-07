@@ -1,0 +1,29 @@
+{
+  path: '/{{ kebabCase name }}',
+  component: Layout,
+  redirect: '/home/{{ kebabCase name }}/list',
+  meta: { title: '{{title}}' },
+  alwaysShow: true,
+  children: [
+    {
+      path: 'list',
+      name: '{{  properCase name }}List',
+      component: () => import('@/views/{{ kebabCase name }}/index'),
+      meta: { title: '{{title}}List' }
+    },
+    {
+      path: 'create',
+      component: () => import('@/views/{{ kebabCase name }}/create'),
+      name: 'Create{{  properCase name }}',
+      meta: { title: 'Create{{title}}' },
+      hidden: true
+    },
+    {
+      path: 'edit/:id',
+      component: () => import('@/views/{{ kebabCase name }}/edit'),
+      name: 'Edit{{  properCase name }}',
+      meta: { title: 'Edit{{title}}', noCache: true, activeMenu: '/{{ kebabCase name }}/list' },
+      hidden: true
+    }
+  ]
+}

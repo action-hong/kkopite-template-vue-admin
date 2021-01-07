@@ -1,0 +1,121 @@
+<template>
+  <div class="app-container">
+    <el-card>
+      <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container" label-position="top">
+        <el-form-item prop="name" label="name">
+          <el-input v-model="postForm.name" />
+        </el-form-item>
+        <el-form-item prop="img" label="图片">
+          <common-upload-image v-model="postForm.img" />
+        </el-form-item>
+        <el-button v-loading="loading" type="success" @click="submitForm">
+          \{{ isEdit ? 'Edit' : 'Create' }}
+        </el-button>
+      </el-form>
+    </el-card>
+  </div>
+</template>
+
+<script>
+import {
+  save{{  properCase name }},
+  get{{  properCase name }}
+} from '@/api/jinbird'
+
+export default {
+  name: '{{  properCase name }}Detail',
+  props: {
+    isEdit: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      postForm: {
+        title: '',
+        img: '',
+        order: 0
+      },
+      loading: false,
+      rules: {
+        img: [{ required: true, message: '必需上传图片', trigger: 'blur' }]
+      },
+      tempRoute: {}
+    }
+  },
+  created() {
+    if (this.isEdit) {
+      const id = this.$route.params && this.$route.params.id
+      this.id = id
+      this.fetchData(id)
+    }
+    this.tempRoute = Object.assign({}, this.$route)
+  },
+  methods: {
+    fetchData(id) {
+      get{{ properCase name }}({
+        id
+      }).then(res => {
+        this.postForm = res.data
+
+        // set tagsview title
+        this.setTagsViewTitle()
+
+        // set page title
+        this.setPageTitle()
+      })
+    },
+    setTagsViewTitle() {
+      const title = '编辑{{ title }}'
+      const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.postForm.id}` })
+      this.$store.dispatch('tagsView/updateVisitedView', route)
+    },
+    setPageTitle() {
+      const title = '编辑{{ title }}'
+      document.title = `${title} - ${this.postForm.id}`
+    },
+    success(message) {
+      this.$message({
+        message,
+        type: 'success',
+        showClose: true,
+        duration: 1000
+      })
+      this.loading = false
+    },
+    submitForm() {
+      this.$refs.postForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          if (this.isEdit) {
+            save{{ properCase name }}(this.postForm)
+              .then(_ => {
+                this.success('更新成功')
+                this.$router.replace({
+                  name: '{{  properCase name }}List'
+                })
+              }).finally(_ => {
+                this.loading = false
+              })
+          } else {
+            save{{ properCase name }}(this.postForm)
+              .then(_ => {
+                this.success('创建成功')
+                this.$router.replace({
+                  name: '{{  properCase name }}List'
+                })
+              }).finally(_ => {
+                this.loading = false
+              })
+          }
+        }
+      })
+    }
+  }
+}
+</script>
+<style lang='scss' scoped>
+//@import url(); 引入公共css类
+
+</style>

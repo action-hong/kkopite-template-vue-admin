@@ -1,0 +1,140 @@
+{{#if template}}
+<template>
+  <div class="app-container">
+    <div class="filter-container">
+      <el-input
+        v-model="listQuery.name"
+        placeholder="搜索"
+        style="width: 200px;"
+        class="filter-item"
+        clearable
+        @clear="handleFilter"
+        @keyup.enter.native="handleFilter"
+      />
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        搜索
+      </el-button>
+      <router-link :to="{ name: 'Create{{  properCase name }}' }">
+        <el-button class="filter-item" type="primary" icon="el-icon-edit">
+          创建
+        </el-button>
+      </router-link>
+    </div>
+    <el-table
+      v-loading="listLoading"
+      :data="list"
+      border
+      style="width: 100% margin-top:30px;"
+    >
+      <el-table-column
+        align="center"
+        label="id"
+        prop="id"
+      />
+
+      <el-table-column align="center" prop="created_at" label="创建时间">
+        <template slot-scope="scope">
+          <span>\{{ scope.row.createTs | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" prop="updated_at" label="更新时间">
+        <template slot-scope="scope">
+          <span>\{{ scope.row.updateTs | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="操作" width="120">
+        <template slot-scope="scope">
+          <router-link :to="{ name: 'Edit{{  properCase name }}', params: { id: scope.row.id } }">
+            <el-button
+              size="mini"
+              type="text"
+            >编辑</el-button>
+          </router-link>
+          <el-divider direction="vertical" />
+          <el-popconfirm
+            title="是否删除?"
+            @onConfirm="handleDelete(scope.$index, scope.row)"
+          >
+            <el-button
+              slot="reference"
+              size="mini"
+              type="text"
+            >删除</el-button>
+          </el-popconfirm>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+  </div>
+</template>
+{{/if}}
+
+{{#if script}}
+<script>
+import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import {
+  get{{  properCase name }}List,
+  save{{ properCase name }}
+} from '@/api/jinbird'
+export default {
+  name: '{{ properCase name }}',
+  components: { Pagination },
+  data() {
+    return {
+      list: null,
+      total: 0,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 15,
+        name: ''
+      }
+    }
+  },
+  created() {
+    this.getList()
+  },
+  mounted() {},
+  methods: {
+    getList() {
+      this.listLoading = true
+      const params = {
+        limit: this.listQuery.limit,
+        offset: this.listQuery.limit * (this.listQuery.page - 1)
+      }
+      if (this.listQuery.name) {
+        params.name = this.listQuery.name
+      }
+      get{{ properCase name }}List(params).then(response => {
+        const data = response.data
+        this.total = data.totalRecord
+        this.list = data.records
+      }).finally(_ => {
+        this.listLoading = false
+      })
+    },
+    handleDelete(index, row) {
+      // 删除处理
+      save{{ properCase name }}({
+        id: row.id,
+        isDeleted: 1
+      })
+        .then(this.getList)
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
+    }
+  }
+}
+</script>
+{{/if}}
+
+{{#if style}}
+<style lang="scss" scoped>
+
+</style>
+{{/if}}

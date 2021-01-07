@@ -1,0 +1,12 @@
+<template>
+  <{{ kebabCase name }}-detail :is-edit="true" />
+</template>
+
+<script>
+import {{ properCase name }}Detail from './components/{{ properCase name }}Detail'
+
+export default {
+  name: 'Create{{ properCase name }}',
+  components: { {{ properCase name }}Detail }
+}
+</script>
