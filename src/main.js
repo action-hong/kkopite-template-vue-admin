@@ -19,6 +19,11 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
+import commonUploadImage from './components/Upload/Image.vue'
+
+// 通用图片上传组件
+Vue.component('common-upload-image', commonUploadImage)
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
