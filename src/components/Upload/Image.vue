@@ -1,6 +1,7 @@
 <template>
   <el-upload
     class="avatar-uploader"
+    :style="{ width: width, height: height }"
     :multiple="false"
     :show-file-list="false"
     :http-request="uploadImg"
@@ -28,6 +29,14 @@ export default {
     size: {
       type: String,
       default: ''
+    },
+    width: {
+      type: String,
+      default: '178px'
+    },
+    height: {
+      type: String,
+      default: '178px'
     }
   },
   data() {
@@ -64,8 +73,8 @@ export default {
   .avatar-uploader {
     ::v-deep {
       .el-upload {
-        width: 178px;
-        height: 178px;
+        width: 100%;
+        height: 100%;
         border: 1px dashed #d9d9d9;
         border-radius: 6px;
         cursor: pointer;
@@ -81,21 +90,27 @@ export default {
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
+    width: 100%;
+    height: 100%;
     text-align: center;
     position: absolute;
     left: 0;
     top: 0;
+
+    &::before {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
 
     &:hover {
       color: #409EFF;
     }
   }
   .avatar {
-    width: 178px;
-    height: 178px;
+    width: 100%;
+    height: 100%;
     display: block;
   }
 </style>
