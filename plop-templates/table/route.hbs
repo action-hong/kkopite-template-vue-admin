@@ -1,0 +1,14 @@
+{
+  path: '/{{ kebabCase name }}',
+  component: Layout,
+  redirect: '/{{ kebabCase name }}/list',
+  meta: { title: '{{properCase name}}' },
+  children: [
+    {
+      path: 'list',
+      name: '{{  properCase name }}List',
+      component: () => import('@/views/{{ kebabCase name }}/index'),
+      meta: { title: '{{properCase name}}List' }
+    }
+  ]
+}

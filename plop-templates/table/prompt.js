@@ -55,6 +55,14 @@ module.exports = {
           script: data.blocks.includes('script'),
           style: data.blocks.includes('style')
         }
+      },
+      {
+        type: 'add',
+        path: `src/views/{{dashCase name}}/route.xtx`,
+        templateFile: 'plop-templates/table/route.hbs',
+        data: {
+          name: name
+        }
       }
     ]
 

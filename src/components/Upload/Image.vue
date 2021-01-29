@@ -4,8 +4,7 @@
     :style="{ width: width, height: height }"
     :multiple="false"
     :show-file-list="false"
-    :http-request="uploadImg"
-    action="https://httpbin.org/post"
+    :action="uploadApi"
   >
     <img v-if="imageUrl" :src="imageUrl" class="avatar">
     <i v-else class="el-icon-plus avatar-uploader-icon" />
@@ -14,7 +13,6 @@
 </template>
 
 <script>
-import { uploadImage } from '@/api/jinbird'
 export default {
   name: 'JinBirdImageUpload',
   props: {
@@ -47,6 +45,9 @@ export default {
   computed: {
     imageUrl() {
       return this.value
+    },
+    uploadApi() {
+      return process.env.VUE_APP_BASE_API + '/file/upload.jbs'
     }
   },
   methods: {
@@ -55,13 +56,6 @@ export default {
     },
     emitInput(val) {
       this.$emit('input', val)
-    },
-    uploadImg(file) {
-      console.log('上传图片', file)
-      uploadImage(file.file)
-        .then(res => {
-          this.emitInput(res.data)
-        })
     }
   }
 }
