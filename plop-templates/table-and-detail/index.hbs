@@ -23,7 +23,6 @@
     <el-table
       v-loading="listLoading"
       :data="list"
-      border
       style="width: 100% margin-top:30px;"
     >
       <el-table-column
@@ -91,7 +90,7 @@ export default {
   components: { Pagination },
   data() {
     return {
-      list: null,
+      list: [],
       total: 0,
       listLoading: true,
       listQuery: {
